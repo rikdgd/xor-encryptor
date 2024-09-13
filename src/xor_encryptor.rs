@@ -1,4 +1,4 @@
-use std::fs::{File, OpenOptions};
+use std::fs::OpenOptions;
 use std::io::{ErrorKind, Read, Write};
 use std::io::Result as StdResult;
 use std::io::Error as StdError;
@@ -55,7 +55,7 @@ impl XorEncryptor {
             .write(true)
             .truncate(true)
             .open(&self.file_path)?;
-        file.set_len(0)?; // TODO: causes overflow. Replace with OpenOptions EVERYWHERE
+        file.set_len(0)?;
         file.write_all(&to_write)?;
         file.flush()?;
         
