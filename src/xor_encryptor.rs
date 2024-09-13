@@ -15,7 +15,7 @@ impl XorEncryptor {
         let key_length = key.len();
         
         Self { 
-            file_path, 
+            file_path,
             key,
             key_length
         }
@@ -34,7 +34,6 @@ impl XorEncryptor {
         }
         
         self.clear_write_file(encrypted_bytes)?;
-        println!("File has been successfully encrypted!");
         Ok(())
     }
     

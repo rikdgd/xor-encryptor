@@ -4,10 +4,10 @@ use std::io::stdin;
 use xor_encryptor::XorEncryptor;
 
 fn main() -> std::io::Result<()>{
-    println!("This is a simple XOR encryption binary.\nDO NOT USE THIS TO HIDE ANY \
-    SENSITIVE DATA AS THIS METHOD OF ENCRYPTION IS VERY VULNERABLE!");
+    println!("This is a simple XOR encryption/decryption binary.\n\nDO NOT USE THIS TO HIDE ANY \
+    SENSITIVE DATA AS THIS METHOD OF ENCRYPTION IS VERY VULNERABLE!\n");
     
-    println!("Please enter the path to the file that should be encrypted: ");
+    println!("Please enter the path to the file that should be encrypted/decrypted: ");
     let mut file_path = String::new();
     stdin().read_line(&mut file_path)?;
     
@@ -27,6 +27,7 @@ fn main() -> std::io::Result<()>{
     
     let mut encryptor = XorEncryptor::new(file_path, key);
     encryptor.encrypt()?;
+    println!("File has been successfully encrypted/decrypted!");
     
     Ok(())
 }
