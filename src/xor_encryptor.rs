@@ -1,4 +1,4 @@
-use std::fs::File;
+use std::fs::{File, OpenOptions};
 use std::io::{ErrorKind, Read, Write};
 use std::io::Result as StdResult;
 use std::io::Error as StdError;
@@ -40,7 +40,9 @@ impl XorEncryptor {
     
     fn read_file_bytes(&self) -> StdResult<Vec<u8>> {
         let mut buffer: Vec<u8> = Vec::new();
-        let mut file = File::open(&self.file_path)?;
+        let mut file = OpenOptions::new()
+            .read(true)
+            .open(&self.file_path)?;
         let bytes_read = file.read_to_end(&mut buffer)?;
         file.flush()?;
         println!("Bytes to encrypt: {}", bytes_read);
@@ -49,7 +51,10 @@ impl XorEncryptor {
     }
     
     fn clear_write_file(&self, to_write: Vec<u8>) -> StdResult<()> {
-        let mut file = File::open(&self.file_path)?;
+        let mut file = OpenOptions::new()
+            .write(true)
+            .truncate(true)
+            .open(&self.file_path)?;
         file.set_len(0)?; // TODO: causes overflow. Replace with OpenOptions EVERYWHERE
         file.write_all(&to_write)?;
         file.flush()?;
