@@ -1,7 +1,6 @@
 use std::fs::OpenOptions;
-use std::io::{ErrorKind, Read, Write};
+use std::io::{Read, Write};
 use std::io::Result as StdResult;
-use std::io::Error as StdError;
 use crate::Config;
 
 #[allow(unused)]
@@ -88,7 +87,7 @@ impl XorEncryptor {
     }
     
     fn get_key_byte(&self, index: &usize) -> &u8 {
-        let mut index = index.clone();
+        let mut index = *index;
         while index > self.key_length {
             index -= self.key_length;
         }

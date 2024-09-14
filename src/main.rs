@@ -31,7 +31,7 @@ fn guided_setup() -> std::io::Result<()> {
     stdin().read_line(&mut file_path)?;
 
     let file_path = file_path.trim().to_string();
-    if let Err(_) = std::fs::File::open(&file_path) {
+    if std::fs::File::open(&file_path).is_err() {
         panic!("Invalid file path.");
     }
 
