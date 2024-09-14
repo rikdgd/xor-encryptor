@@ -13,7 +13,7 @@ fn main() -> std::io::Result<()> {
     if let Ok(config) = Config::from_args(args) {
         let mut encryptor = XorEncryptor::from_config(config);
         encryptor.encrypt()?;
-        println!("Successfully encrypted file!");
+        println!("Successfully encrypted/decrypted file!");
         
         Ok(())
     } else {
