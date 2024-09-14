@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "encryptor"
-version = "0.1.0"
+name = "xor-encryptor"
+version = "1.0.0"
