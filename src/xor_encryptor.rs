@@ -25,9 +25,10 @@ impl XorEncryptor {
     pub fn from_config(config: Config) -> Self {
         let key_length = config.encryption_key.len();
         let key = config.encryption_key.as_bytes().to_vec();
+        let file_path = config.paths.first().unwrap().clone();
         
         Self {
-            file_path: config.file_path,
+            file_path,
             key,
             key_length,
         }
