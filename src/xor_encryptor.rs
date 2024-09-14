@@ -2,6 +2,7 @@ use std::fs::OpenOptions;
 use std::io::{ErrorKind, Read, Write};
 use std::io::Result as StdResult;
 use std::io::Error as StdError;
+use crate::Config;
 
 #[allow(unused)]
 #[derive(Debug, Clone, PartialEq)]
@@ -19,6 +20,17 @@ impl XorEncryptor {
             file_path,
             key,
             key_length
+        }
+    }
+    
+    pub fn from_config(config: Config) -> Self {
+        let key_length = config.encryption_key.len();
+        let key = config.encryption_key.as_bytes().to_vec();
+        
+        Self {
+            file_path: config.file_path,
+            key,
+            key_length,
         }
     }
 
@@ -64,19 +76,12 @@ impl XorEncryptor {
     
     fn xor_chunk(&self, chunk: Vec<u8>) -> StdResult<Vec<u8>> {
         let mut result: Vec<u8> = Vec::new();
-        if chunk.len() != self.key_length {
-            // TODO: Trim the key to the same size instead of returning an error.
-            return Err(StdError::new(
-                ErrorKind::InvalidData, 
-                "Key didn't match chunk length."
-            ));
-        } else {
-            for i in 0..chunk.len() {
-                let data_byte = chunk.get(i).unwrap();
-                let key_byte = self.get_key_byte(&i);
-                
-                result.push(data_byte ^ key_byte);
-            }
+
+        for i in 0..chunk.len() {
+            let data_byte = chunk.get(i).unwrap();
+            let key_byte = self.get_key_byte(&i);
+
+            result.push(data_byte ^ key_byte);
         }
         
         Ok(result)
