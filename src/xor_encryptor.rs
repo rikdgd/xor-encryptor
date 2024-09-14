@@ -7,12 +7,13 @@ use std::io::Error as StdError;
 #[derive(Debug, Clone, PartialEq)]
 pub struct XorEncryptor {
     file_path: String,
-    key: String,
+    key: Vec<u8>,
     key_length: usize,
 }
 impl XorEncryptor {
     pub fn new(file_path: String, key: String) -> Self {
         let key_length = key.len();
+        let key = key.as_bytes().to_vec();
         
         Self { 
             file_path,
@@ -67,12 +68,12 @@ impl XorEncryptor {
             // TODO: Trim the key to the same size instead of returning an error.
             return Err(StdError::new(
                 ErrorKind::InvalidData, 
-                "key didn't match chunk length"
+                "Key didn't match chunk length."
             ));
         } else {
             for i in 0..chunk.len() {
                 let data_byte = chunk.get(i).unwrap();
-                let key_byte = chunk.get(i).unwrap();
+                let key_byte = self.get_key_byte(&i);
                 
                 result.push(data_byte ^ key_byte);
             }
@@ -81,4 +82,12 @@ impl XorEncryptor {
         Ok(result)
     }
     
+    fn get_key_byte(&self, index: &usize) -> &u8 {
+        let mut index = index.clone();
+        while index > self.key_length {
+            index -= self.key_length;
+        }
+        
+        self.key.get(index).expect("Failed to get key byte.")
+    }
 }
