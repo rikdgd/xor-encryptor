@@ -6,17 +6,17 @@ use crate::Config;
 #[allow(unused)]
 #[derive(Debug, Clone, PartialEq)]
 pub struct XorEncryptor {
-    file_path: String,
+    file_paths: Vec<String>,
     key: Vec<u8>,
     key_length: usize,
 }
 impl XorEncryptor {
-    pub fn new(file_path: String, key: String) -> Self {
+    pub fn new(file_paths: Vec<String>, key: String) -> Self {
         let key_length = key.len();
         let key = key.as_bytes().to_vec();
         
-        Self { 
-            file_path,
+        Self {
+            file_paths,
             key,
             key_length
         }
@@ -27,16 +27,24 @@ impl XorEncryptor {
         let key = config.encryption_key.as_bytes().to_vec();
         
         Self {
-            file_path: config.file_path,
+            file_paths: config.paths,
             key,
             key_length,
         }
     }
 
     pub fn encrypt(&mut self) -> StdResult<()> {
-        let file_bytes = self.read_file_bytes()?;
-        let mut encrypted_bytes: Vec<u8> = Vec::new();
+        for file_path in &self.file_paths {
+            self.encrypt_file(file_path)?;
+        }
         
+        Ok(())
+    }
+    
+    fn encrypt_file(&self, path: &str) -> StdResult<()> {
+        let file_bytes = XorEncryptor::read_file_bytes(path)?;
+        let mut encrypted_bytes: Vec<u8> = Vec::new();
+
         for chunk in file_bytes.chunks(self.key_length) {
             let chunk = chunk.to_vec();
             let xor_chunk = self.xor_chunk(chunk)?;
@@ -44,16 +52,16 @@ impl XorEncryptor {
                 encrypted_bytes.push(byte);
             }
         }
-        
-        self.clear_write_file(encrypted_bytes)?;
+
+        XorEncryptor::clear_write_file(path, encrypted_bytes)?;
         Ok(())
     }
     
-    fn read_file_bytes(&self) -> StdResult<Vec<u8>> {
+    fn read_file_bytes(path: &str) -> StdResult<Vec<u8>> {
         let mut buffer: Vec<u8> = Vec::new();
         let mut file = OpenOptions::new()
             .read(true)
-            .open(&self.file_path)?;
+            .open(path)?;
         let bytes_read = file.read_to_end(&mut buffer)?;
         file.flush()?;
         println!("Bytes to encrypt: {}", bytes_read);
@@ -61,11 +69,11 @@ impl XorEncryptor {
         Ok(buffer)
     }
     
-    fn clear_write_file(&self, to_write: Vec<u8>) -> StdResult<()> {
+    fn clear_write_file(path: &str, to_write: Vec<u8>) -> StdResult<()> {
         let mut file = OpenOptions::new()
             .write(true)
             .truncate(true)
-            .open(&self.file_path)?;
+            .open(path)?;
         file.set_len(0)?;
         file.write_all(&to_write)?;
         file.flush()?;
