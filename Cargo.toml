@@ -1,6 +1,6 @@
 [package]
 name = "xor-encryptor"
-version = "1.0.0"
+version = "1.1.0"
 edition = "2021"
 authors = ["Rik de Goede"]
 description = "A very basic implementation of encryption using XOR."
