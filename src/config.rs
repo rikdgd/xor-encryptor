@@ -47,6 +47,27 @@ impl Config {
             }
         }
     }
+
+    pub fn from_path(path: &str, encryption_key: &str) -> IoResult<Self> {
+        let paths: Vec<String>;
+        let encryption_key = encryption_key.to_string();
+        
+        if fs::read_dir(path).is_ok() {
+            paths = get_files_in_dir(path)?;
+        } else if fs::read(path).is_ok() {
+            paths = vec![path.to_string()]
+        } else {
+            return Err(IoError::new(
+                ErrorKind::InvalidInput, 
+                "Invalid path."
+            ));
+        }
+        
+        Ok(Self{
+            paths,
+            encryption_key,
+        })
+    }
 }
 
 fn get_files_in_dir(dir_path: &str) -> IoResult<Vec<String>> {

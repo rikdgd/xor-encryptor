@@ -11,17 +11,6 @@ pub struct XorEncryptor {
     key_length: usize,
 }
 impl XorEncryptor {
-    pub fn new(file_paths: Vec<String>, key: String) -> Self {
-        let key_length = key.len();
-        let key = key.as_bytes().to_vec();
-        
-        Self {
-            file_paths,
-            key,
-            key_length
-        }
-    }
-    
     pub fn from_config(config: Config) -> Self {
         let key_length = config.encryption_key.len();
         let key = config.encryption_key.as_bytes().to_vec();
