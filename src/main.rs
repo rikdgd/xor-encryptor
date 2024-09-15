@@ -44,7 +44,7 @@ fn guided_setup() -> std::io::Result<()> {
         panic!("Given key was to short.");
     }
 
-    let mut encryptor = XorEncryptor::new(file_path, key);
+    let mut encryptor = XorEncryptor::new(vec![file_path], key);
     encryptor.encrypt()?;
     println!("File has been successfully encrypted/decrypted!");
 
