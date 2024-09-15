@@ -1,6 +1,6 @@
 use std::fs::OpenOptions;
 use std::io::{Read, Write};
-use std::io::Result as StdResult;
+use std::io::Result as IoResult;
 use crate::Config;
 
 #[allow(unused)]
@@ -22,7 +22,7 @@ impl XorEncryptor {
         }
     }
 
-    pub fn encrypt(&mut self) -> StdResult<()> {
+    pub fn encrypt(&mut self) -> IoResult<()> {
         for file_path in &self.file_paths {
             self.encrypt_file(file_path)?;
         }
@@ -30,7 +30,7 @@ impl XorEncryptor {
         Ok(())
     }
     
-    fn encrypt_file(&self, path: &str) -> StdResult<()> {
+    fn encrypt_file(&self, path: &str) -> IoResult<()> {
         let file_bytes = XorEncryptor::read_file_bytes(path)?;
         let mut encrypted_bytes: Vec<u8> = Vec::new();
 
@@ -46,7 +46,7 @@ impl XorEncryptor {
         Ok(())
     }
     
-    fn read_file_bytes(path: &str) -> StdResult<Vec<u8>> {
+    fn read_file_bytes(path: &str) -> IoResult<Vec<u8>> {
         let mut buffer: Vec<u8> = Vec::new();
         let mut file = OpenOptions::new()
             .read(true)
@@ -58,7 +58,7 @@ impl XorEncryptor {
         Ok(buffer)
     }
     
-    fn clear_write_file(path: &str, to_write: Vec<u8>) -> StdResult<()> {
+    fn clear_write_file(path: &str, to_write: Vec<u8>) -> IoResult<()> {
         let mut file = OpenOptions::new()
             .write(true)
             .truncate(true)
@@ -70,7 +70,7 @@ impl XorEncryptor {
         Ok(())
     }
     
-    fn xor_chunk(&self, chunk: Vec<u8>) -> StdResult<Vec<u8>> {
+    fn xor_chunk(&self, chunk: Vec<u8>) -> IoResult<Vec<u8>> {
         let mut result: Vec<u8> = Vec::new();
 
         for i in 0..chunk.len() {
