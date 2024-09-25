@@ -36,7 +36,7 @@ impl XorEncryptor {
 
         for chunk in file_bytes.chunks(self.key_length) {
             let chunk = chunk.to_vec();
-            let xor_chunk = self.xor_chunk(chunk)?;
+            let xor_chunk = self.xor_chunk(chunk);
             for byte in xor_chunk {
                 encrypted_bytes.push(byte);
             }
@@ -70,7 +70,7 @@ impl XorEncryptor {
         Ok(())
     }
     
-    fn xor_chunk(&self, chunk: Vec<u8>) -> IoResult<Vec<u8>> {
+    fn xor_chunk(&self, chunk: Vec<u8>) -> Vec<u8> {
         let mut result: Vec<u8> = Vec::new();
 
         for i in 0..chunk.len() {
@@ -80,7 +80,7 @@ impl XorEncryptor {
             result.push(data_byte ^ key_byte);
         }
         
-        Ok(result)
+        result
     }
     
     fn get_key_byte(&self, index: &usize) -> &u8 {
